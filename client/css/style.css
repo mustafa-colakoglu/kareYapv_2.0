@@ -79,15 +79,14 @@ a {
 }
 .menus{
 	width:100%;
-	height:100%;
+	height:calc(100% - 40px);
 	position:absolute;
-	top:0;
+	top:40px;
 	left:0;
 }
 .menus ul{
 	width:60%;
-	float:none;
-	margin:0 auto;
+	left:20%;
 	position:absolute;
 }
 .menus ul li{
@@ -101,16 +100,62 @@ a {
 }
 .first-menu{
 	height:104px;
-	top:calc(50% - 52px);
-	left:20%;
+	top:calc(50% - 92px);
 }
 	.first-menu li:nth-child(1){
 		background:rgb(41, 72, 125);
 		color:#fff;
+		font-size:20px;
 	}
-.back-animation{
+.game-menu{
+	height:206px;
+	top:calc(50% - 190px);
+}
+.profile{
 	width:100%;
-	height:100%;
+	height:40px;
+	font-size:15px;
+	text-align:center;
+	color:#fff;
+	background:#121212;
 	position:absolute;
-	z-index:1;
+	left:-100%;
+}
+.profile .name{
+	width:calc(30% - 5px);
+	height:20px;
+	padding-top:10px;
+	padding-bottom:10px;
+	line-height:20px;
+	font-size:13px;
+}
+.profile .onoff-line{
+	width:5px;
+	height:40px;
+}
+.profile .onoff-line .round{
+	width:5px;
+	height:5px;
+	margin-top:17.5px;
+	border-radius:5px;
+}
+.profile .score{
+	width:calc(35% - 40px);
+	height:20px;
+	padding:10px;
+	line-height:20px;
+}
+.profile .kp{
+	width:calc(35% - 40px);
+	height:20px;
+	padding:10px;
+	line-height:20px;
+}
+.profile .profile-image{
+	width:40px;
+	height:40px;
+}
+.profile .profile-image img{
+	width:40px;
+	height:40px;
 }
