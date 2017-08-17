@@ -26,15 +26,19 @@
 						<li onClick="connectFacebook()">Facebook ile bağlan</li>
 						<li>Misafirimiz olun</li>
 					</ul>
+					<ul class="game-main-menu">
+						<li onClick="step(4)">Oyuna Giriş</li>
+						<li onClick="step(5)">Enler</li>
+						<li onClick="step(6)">Nasıl Oynanır?</li>
+						<li onClick="step(7)">Ayarlar</li>
+						<li onClick="logout()" class="turnBack">Çıkış</li>
+					</ul>
 					<ul class="game-menu">
-						<li>Hızlı Oyna</li>
-						<li>Salon Seçin</li>
-						<li>Masa Aç</li>
-						<li>Masa Seçin</li>
-						<li>Enler</li>
-						<li>Nasıl Oynanır?</li>
-						<li>Ayarlar</li>
-						<li>Çıkış</li>
+						<li onClick="step(8)">Hızlı Oyna</li>
+						<li onClick="step(9)">Salon Seçin</li>
+						<li onClick="step(10)">Masa Aç</li>
+						<li onClick="step(11)">Masa Seçin</li>
+						<li onClick="step(12)" class="turnBack">Geri Dön</li>
 					</ul>
 				</div>
 				<div class="profile">
@@ -43,6 +47,23 @@
 					<div class="score"></div>
 					<div class="kp"></div>
 					<div class="profile-image"><img src="" /></div>
+				</div>
+				<div class="game-page">
+					<div class="game-page-menu">
+						<div class="game-page-menu-item" onClick="step(14)">Online</div>
+						<div class="game-page-menu-item" onClick="step(15)">Offline</div>
+					</div>
+					<div class="game-page-page">
+						
+					</div>
+					<div class="game-page-page">
+						
+					</div>
+					<div class="online-menu"></div>
+				</div>
+				<div class="waiting-page">
+					<div class="wait-message">Rakip aranıyor . . .</div>
+					<div class="wait-cancel" onClick="step(17)">İptal</div>
 				</div>
 			</div>
 		</div>

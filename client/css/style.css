@@ -98,18 +98,25 @@ a {
 	position:absolute;
 	cursor:pointer;
 }
+.menus ul li.turnBack{
+	color:red !important;
+}
 .first-menu{
-	height:104px;
-	top:calc(50% - 92px);
+	height:auto;
+	top:calc(50% - 52px);
 }
 	.first-menu li:nth-child(1){
 		background:rgb(41, 72, 125);
 		color:#fff;
 		font-size:20px;
 	}
+.game-main-menu{
+	height:auto;
+	top:calc(50% - 130px);
+}
 .game-menu{
-	height:206px;
-	top:calc(50% - 190px);
+	height:auto;
+	top:calc(50% - 104px);
 }
 .profile{
 	width:100%;
@@ -158,4 +165,60 @@ a {
 .profile .profile-image img{
 	width:40px;
 	height:40px;
+}
+.waiting-page{
+	width:100%;
+	height:calc(100% - 40px);
+	position:absolute;
+	top:40px;
+	left:0;
+	display:none;
+}
+	.wait-message{
+		width:100%;
+		height:auto;
+		margin-top:40%;
+		text-align:center;
+	}
+	.wait-cancel{
+		width:calc(60% - 20px);
+		height:auto;
+		padding:10px;
+		background:red;
+		border-radius:5px;
+		margin-left:20%;
+		margin-top:5%;
+		text-align:center;
+		color:#fff;
+		cursor:pointer;
+	}
+.game-page{
+	width:100%;
+	height:calc(100% - 40px);
+	top:40px;
+	left:0;
+	display:none;
+}
+.game-page-menu{
+	width:100%;
+	height:40px;
+}
+.game-page-menu-item{
+	width:calc(50% - 1px);
+	height:39px;
+	border-bottom:1px solid #121212;
+	border-right:1px solid #121212;
+	font-size:15px;
+	text-align:center;
+	line-height:39px;
+	cursor:pointer;
+}
+.game-page-menu-item:nth-child(2){
+	width:50%;
+	border-right:none;
+}
+.game-page-page{
+	width:100%;
+	height:calc(100% - 80px);
+	display:none;
 }

@@ -8,7 +8,10 @@ var Android = {
 	"level" : 1,
 	"roomId":1,
 	"profileImageUrl":"https://scontent-frt3-1.xx.fbcdn.net/v/t1.0-1/c53.0.160.160/p160x160/1012701_864726226871930_6102232789075953871_n.jpg?oh=f3eec577474b2ba20b8bf25650077e7a&oe=5A22D6F9",
-	"md5" : "123456789"
+	"md5" : "123456789",
+	"Toast":function(message){
+		alert(message);
+	}
 }
 if(typeof(Android) == "undefined"){
 	alert("Lütfen uygulamadan giriş yapın");
@@ -36,6 +39,82 @@ else{
 		}
 		else if(stepId == 3){
 			bringMenu(0);
+		}
+		else if(stepId == 4){
+			takeMenu(1,2);
+		}
+		else if(stepId == 8){
+			takeMenu(2,undefined,13);
+			
+		}
+		else if(stepId == 12){
+			takeMenu(2,1);
+		}
+		else if(stepId == 13){
+			openWaitingPage();
+		}
+		else if(stepId == 14){
+			openGamePage(0);
+		}
+		else if(stepId == 15){
+			openGamePage(1);
+		}
+		else if(stepId == 16){
+			bringGamePage();
+			openGamePage();
+		}
+		else if(stepId == 17){
+			closeWaitingPage();
+			bringMenu(2);
+		}
+	}
+	function openWaitingPage(){
+		$(".waiting-page").show();
+		tryQuickPlayCount = 0;
+		setInterval(function(){
+			if(tryQuickPlayCount > 5){
+				console.log(tryQuickPlayCount);
+				tryQuickPlayCount++;
+			}
+			else{
+				clearInterval(this);
+			}
+		},1000);
+	}
+	function closeWaitingPage(){
+		$(".waiting-page").hide();
+	}
+	function openGamePage(pageId = undefined){
+		if(pageId == undefined){
+			if(isConnect()){
+				$(".game-page-menu-item:eq(0)").css({"color":"#ffffff","background":"#68b5f0"});
+				$(".game-page-menu-item:eq(1)").css({"color":"#121212","background":"#ffffff"});
+				$(".game-page-page:eq(1)").hide();
+				$(".game-page-page:eq(0)").show();
+			}
+			else{
+				$(".game-page-menu-item:eq(1)").css({"color":"#ffffff","background":"#f03236"});
+				$(".game-page-menu-item:eq(0)").css({"color":"#121212","background":"#ffffff"});
+				$(".game-page-page:eq(0)").hide();
+				$(".game-page-page:eq(1)").show();
+			}
+		}
+		else if(pageId == 0){
+			if(isConnect()){
+				$(".game-page-menu-item:eq(0)").css({"color":"#ffffff","background":"#68b5f0"});
+				$(".game-page-menu-item:eq(1)").css({"color":"#121212","background":"#ffffff"});
+				$(".game-page-page:eq(1)").hide();
+				$(".game-page-page:eq(0)").show();
+			}
+			else{
+				Android.Toast("İnternet bağlantınızı kontrol edin");
+			}
+		}
+		else if(pageId == 1){
+			$(".game-page-menu-item:eq(1)").css({"color":"#ffffff","background":"#f03236"});
+			$(".game-page-menu-item:eq(0)").css({"color":"#121212","background":"#ffffff"});
+			$(".game-page-page:eq(0)").hide();
+			$(".game-page-page:eq(1)").show();
 		}
 	}
 	function isLogin(){
@@ -122,18 +201,48 @@ else{
 			}
 			menuItem.animate({
 				"left":"0"
-			},250,"linear",function(){
+			},150,"linear",function(){
 				$(this).after(function(){
 					bringMenuItem(menuId,++count,menuItemLength);
 				});
 			});
 		}
 	}
-	function takeMenu(menuId){
-		$(".menus ul:eq("+menuId+")").hide();
+	function takeMenu(menuId,nextId = undefined,nextStepId = undefined){
+		var menuItemLength = $(".menus ul:eq("+menuId+") li").length;
+		takeMenuItem(menuId,--menuItemLength,menuItemLength,nextId,nextStepId);
 	}
-	function takeMenuItem(menuId,count,menuItemLength){
-		
+	function takeMenuItem(menuId,count,menuItemLength,nextId = undefined,nextStepId = undefined){
+		if(count != -1){
+			var menuItem = $(".menus ul:eq("+menuId+") li:eq("+count+")")
+			if(count % 2 == 0){
+				menuItem.animate({
+					"left":"160%"
+				},150,"linear",function(){
+					$(this).after(function(){
+						takeMenuItem(menuId,--count,menuItemLength,nextId,nextStepId);
+					});
+				});
+			}
+			else{
+				menuItem.animate({
+					"left":"-105%"
+				},150,"linear",function(){
+					$(this).after(function(){
+						takeMenuItem(menuId,--count,menuItemLength,nextId,nextStepId);
+					});
+				});
+			}
+		}
+		else{
+			$(".menus ul:eq("+menuId+")").hide();
+			if(nextId != undefined){
+				bringMenu(nextId);
+			}
+			if(nextStepId != undefined){
+				step(nextStepId);
+			}
+		}
 	}
 	function bringProfile(){
 		if(typeof(Android.name) != "undefined"){
@@ -147,15 +256,22 @@ else{
 		$(".profile .profile-image img").attr("src",Android.profileImageUrl);
 		$(".profile").animate({"left":0},250);
 	}
+	function bringGamePage(){
+		$(".game-page").css({"left":"100%","display":"block"});
+		$(".game-page").animate({"left":0},150);
+	}
 	function colorize(){
 		if(isConnect()){
 			$(".profile").css("color","#ffffff");
 			$(".menus").css("color","#121212");
 			$(".profile .onoff-line .round").css("background","green");
+			$(".game-menu li").css("color","#121212");
 		}
 		else{
 			$(".profile, .menus").css("color","#999");
-			$(".game-menu li:eq(0), .game-menu li:eq(5), .game-menu li:eq(6), .game-menu li:eq(7)").css("color","#121212");
+			$(".game-main-menu li:eq(0), .game-main-menu li:eq(2), .game-main-menu li:eq(3), .game-main-menu li:eq(4)").css("color","#121212");
+			$(".game-menu li:eq(1), .game-menu li:eq(2), .game-menu li:eq(3)").css("color","#999");
+			$(".game-menu li:eq(0)").css("color","#121212");
 			$(".profile .onoff-line .round").css("background","red");
 		}
 	}
