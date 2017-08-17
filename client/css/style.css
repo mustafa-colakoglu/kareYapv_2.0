@@ -222,3 +222,24 @@ a {
 	height:calc(100% - 80px);
 	display:none;
 }
+.alert-message{
+	width:calc(60% - 20px);
+	height:auto;
+	min-height:20px;
+	z-index:99;
+	left:20%;
+	bottom:20%;
+	position:absolute;
+	background:red;
+	display:none;
+	padding:10px;
+}
+.alert-message .message{
+	width:calc(100% - 20px);
+	color:#ffffff;
+	height:auto;
+	font-size:15px;
+	line-height:20px;
+	text-align:center;
+	height:auto;
+}

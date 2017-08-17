@@ -10,7 +10,7 @@ var Android = {
 	"profileImageUrl":"https://scontent-frt3-1.xx.fbcdn.net/v/t1.0-1/c53.0.160.160/p160x160/1012701_864726226871930_6102232789075953871_n.jpg?oh=f3eec577474b2ba20b8bf25650077e7a&oe=5A22D6F9",
 	"md5" : "123456789",
 	"Toast":function(message){
-		alert(message);
+		alertMessage(message);
 	}
 }
 if(typeof(Android) == "undefined"){
@@ -44,8 +44,12 @@ else{
 			takeMenu(1,2);
 		}
 		else if(stepId == 8){
-			takeMenu(2,undefined,13);
-			
+			if(isConnect()){
+				takeMenu(2,undefined,13);
+			}
+			else{
+				alertMessage("Lütfen internet bağlantınızı kontrol edin.");
+			}
 		}
 		else if(stepId == 12){
 			takeMenu(2,1);
@@ -60,29 +64,75 @@ else{
 			openGamePage(1);
 		}
 		else if(stepId == 16){
-			bringGamePage();
-			openGamePage();
+			bringMenu(2,17);
 		}
 		else if(stepId == 17){
+			alertMessage("Rakip Bulunamadı.");
+		}
+		else if(stepId == 18){
 			closeWaitingPage();
+		}
+		else if(stepId== 19){
 			bringMenu(2);
 		}
 	}
 	function openWaitingPage(){
-		$(".waiting-page").show();
-		tryQuickPlayCount = 0;
-		setInterval(function(){
-			if(tryQuickPlayCount > 5){
-				console.log(tryQuickPlayCount);
-				tryQuickPlayCount++;
-			}
-			else{
-				clearInterval(this);
-			}
-		},1000);
+		if(isConnect()){
+			$(".waiting-page").show();
+			tryQuickPlayCount = 0;
+			quickPlayFinded = false;
+			cancelledQuickPlay = false;
+			tryInterval = setInterval(function(){
+				if(cancelledQuickPlay){
+					tryQuickPlayCount = 0;
+					clearInterval(tryInterval);
+					step(19);
+				}
+				else if(quickPlayFinded == false){
+					if(tryQuickPlayCount < 5){
+						tryQuickPlayCount++;
+					}
+					else{
+						tryQuickPlayCount = 0;
+						clearInterval(tryInterval);
+						closeWaitingPage();
+						step(16);
+					}
+				}
+				else{
+					tryQuickPlayCount = 0;
+					clearInterval(tryInterval);
+					closeWaitingPage();
+				}
+			},1000);
+		}
+		else{
+			alertMessage("Lütfen internet bağlantınızı kontrol edin.");
+		}
 	}
 	function closeWaitingPage(){
 		$(".waiting-page").hide();
+		cancelledQuickPlay = true;
+	}
+	function alertMessage(message){
+		$(".alert-message .message").html(message);
+		$(".alert-message").css("opacity",1);
+		$(".alert-message").show();
+		closeAlertMessageCount = 0;
+		var closeAlertMessageInterval = setInterval(function(){
+			if(closeAlertMessageCount < 1){
+				closeAlertMessageCount++;
+			}
+			else{
+				closeAlertMessageCount = 0;
+				clearInterval(closeAlertMessageInterval);
+				$(".alert-message").animate({"opacity":0},1000,"linear",function(){
+					$(this).after(function(){
+						$(".alert-message").hide();
+					});
+				});
+			}
+		},1000);
 	}
 	function openGamePage(pageId = undefined){
 		if(pageId == undefined){
@@ -165,15 +215,15 @@ else{
 			});
 		});
 	}
-	function bringMenu(menuId){
+	function bringMenu(menuId,nextStepId = undefined){
 		menuId = parseInt(menuId);
 		$(".menus ul").hide();
 		$(".menus ul:eq("+menuId+")").show();
 		$(".menus ul:eq("+menuId+") li").hide();
 		var menuItemLength = $(".menus ul:eq("+menuId+") li").length;
-		bringMenuItem(menuId,0,menuItemLength);
+		bringMenuItem(menuId,0,menuItemLength,nextStepId);
 	}
-	function bringMenuItem(menuId,count,menuItemLength){
+	function bringMenuItem(menuId,count,menuItemLength,nextStepId = undefined){
 		if(count != menuItemLength){
 			var menuItem = $(".menus ul:eq("+menuId+") li:eq("+count+")")
 			if(count % 2 == 0){
@@ -203,9 +253,14 @@ else{
 				"left":"0"
 			},150,"linear",function(){
 				$(this).after(function(){
-					bringMenuItem(menuId,++count,menuItemLength);
+					bringMenuItem(menuId,++count,menuItemLength,nextStepId);
 				});
 			});
+		}
+		else{
+			if(nextStepId != undefined){
+				step(nextStepId);
+			}
 		}
 	}
 	function takeMenu(menuId,nextId = undefined,nextStepId = undefined){
@@ -280,5 +335,8 @@ else{
 	});
 	socket.on("disconnect",function(){
 		colorize();
+	});
+	socket.on("startingGame",function(data){
+		quickPlayFinded = true;
 	});
 }
