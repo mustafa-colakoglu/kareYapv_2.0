@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var mongoose = require('mongoose');
 var md5 = require('md5');
-var url = "mongodb://squar_server:325375@ds145293.mlab.com:45293/squar";
+/*var url = "mongodb://squar_server:325375@ds145293.mlab.com:45293/squar";
 mongoose.connect(url);
 var Schema = mongoose.Schema;
 var userSchema = new Schema({
