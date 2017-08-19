@@ -1,5 +1,5 @@
 var Android = {
-	"uniqueId" : 1,
+	"id" : 1,
 	"facebookUId" : "123456789",
 	"uniqueName" : "ABC23",
 	"name" : "Mustafa Çolakoğlu",
@@ -8,10 +8,7 @@ var Android = {
 	"level" : 1,
 	"roomId":1,
 	"profileImageUrl":"https://scontent-frt3-1.xx.fbcdn.net/v/t1.0-1/c53.0.160.160/p160x160/1012701_864726226871930_6102232789075953871_n.jpg?oh=f3eec577474b2ba20b8bf25650077e7a&oe=5A22D6F9",
-	"md5" : "123456789",
-	"Toast":function(message){
-		alertMessage(message);
-	}
+	"md5" : "339cefeb08b0bafa9bf80a40107c7ae2"
 }
 if(typeof(Android) == "undefined"){
 	alert("Lütfen uygulamadan giriş yapın");
@@ -23,6 +20,8 @@ else{
 	var windowWidth = $(window).width();
 	var windowHeight = $(window).height();
 	var socket = io.connect("http://localhost");
+	isLogined = false;
+	socket.emit("login",Android);
 	step(0);
 	function step(stepId){
 		if(stepId == 0){
@@ -168,19 +167,7 @@ else{
 		}
 	}
 	function isLogin(){
-		if(typeof(Android.facebookUId) != "undefined"){
-			if(Android.facebookUId != ""){
-				return true;
-			}
-			return false;
-		}
-		else if(typeof(Android.uniqueName) != "undefined"){
-			if(Android.uniqueName != ""){
-				return true;
-			}
-			return false;
-		}
-		return false;
+		return isLogined;
 	}
 	function firstOpenApp(){
 		$(document).ready(function(){
@@ -281,7 +268,7 @@ else{
 			}
 			else{
 				menuItem.animate({
-					"left":"-105%"
+					"left":"-166%"
 				},150,"linear",function(){
 					$(this).after(function(){
 						takeMenuItem(menuId,--count,menuItemLength,nextId,nextStepId);
@@ -324,6 +311,7 @@ else{
 		}
 		else{
 			$(".profile, .menus").css("color","#999");
+			$(".menus ul:eq(0)").css("color","#121212");
 			$(".game-main-menu li:eq(0), .game-main-menu li:eq(2), .game-main-menu li:eq(3), .game-main-menu li:eq(4)").css("color","#121212");
 			$(".game-menu li:eq(1), .game-menu li:eq(2), .game-menu li:eq(3)").css("color","#999");
 			$(".game-menu li:eq(0)").css("color","#121212");
@@ -335,6 +323,9 @@ else{
 	});
 	socket.on("disconnect",function(){
 		colorize();
+	});
+	socket.on("login",function(data){
+		isLogined = data.success;
 	});
 	socket.on("startingGame",function(data){
 		quickPlayFinded = true;

@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var mongoose = require('mongoose');
 var md5 = require('md5');
+var squar_modules = require("squar_modules");
 /*var url = "mongodb://squar_server:325375@ds145293.mlab.com:45293/squar";
 mongoose.connect(url);
 var Schema = mongoose.Schema;
@@ -65,8 +66,18 @@ var io = require("socket.io").listen(server);
 io.set("origins","*:*");
 io.sockets.on("connection",function(socket){
 	console.log("connected");
-	socket.on("merhaba",function(data){
-		console.log(data);
+	socket.on("login",function(data){
+		if(typeof(data.id) == undefined){ io.to(socket.id).emit("login",{"success":false}); }else{ var id = data.id+"";}
+		if(typeof(data.facebookUId) == undefined){var facebookUId = "";}else{ var facebookUId = data.facebookUId+"";}
+		if(typeof(data.uniqueName) == undefined){ io.to(socket.id).emit("login",{"success":false}); }else{ var uniqueName = data.uniqueName+"";}
+		if(typeof(data.name) == undefined){ var name = "";}else{ var name = data.name+"";}
+		if(typeof(data.kp) == undefined){ var kp = "";}else{ var kp = data.kp+"";}
+		if(typeof(data.score) == undefined){ var score = "";}else{ var score = data.score+"";}
+		if(typeof(data.level) == undefined){ var level = "";}else{ var level = data.level+"";}
+		if(typeof(data.roomId) == undefined){ var roomId = "";}else{ var roomId = data.roomId+"";}
+		if(typeof(data.md5) == undefined){ io.to(socket.id).emit("login",{"success":false}); }else{ var md5 = data.md5+"";}
+		var controlMd5 = createMd5(id+facebookUId+uniqueName+uniqueName+name+kp+score+level+roomId);
+		io.to(socket.id).emit("login",{"success":(md5 == controlMd5)});
 	});
 });
 app.get("/",function(req,res){
@@ -75,6 +86,13 @@ app.get("/",function(req,res){
 app.get("/auth/facebook",function(req,res){});
 app.get("/auth/facebook/callback",function(req,res){});
 app.get("/logout",function(req,res){});
+
+// functions
 function createMd5(string){
-	return md5(string);
+	var firstMd5 = md5(string);
+	var newString = "";
+	for(var i=0;i<8;i++){
+		newString = newString+firstMd5.charAt(i);
+	}
+	return md5(newString);
 }
