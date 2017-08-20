@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var mongoose = require('mongoose');
 var md5 = require('md5');
-var squar_modules = require("squar_modules");
+var sm = require("squar_modules");
 /*var url = "mongodb://squar_server:325375@ds145293.mlab.com:45293/squar";
 mongoose.connect(url);
 var Schema = mongoose.Schema;
@@ -67,18 +67,24 @@ io.set("origins","*:*");
 io.sockets.on("connection",function(socket){
 	console.log("connected");
 	socket.on("login",function(data){
-		if(typeof(data.id) == undefined){ io.to(socket.id).emit("login",{"success":false}); }else{ var id = data.id+"";}
-		if(typeof(data.facebookUId) == undefined){var facebookUId = "";}else{ var facebookUId = data.facebookUId+"";}
-		if(typeof(data.uniqueName) == undefined){ io.to(socket.id).emit("login",{"success":false}); }else{ var uniqueName = data.uniqueName+"";}
-		if(typeof(data.name) == undefined){ var name = "";}else{ var name = data.name+"";}
-		if(typeof(data.kp) == undefined){ var kp = "";}else{ var kp = data.kp+"";}
-		if(typeof(data.score) == undefined){ var score = "";}else{ var score = data.score+"";}
-		if(typeof(data.level) == undefined){ var level = "";}else{ var level = data.level+"";}
-		if(typeof(data.roomId) == undefined){ var roomId = "";}else{ var roomId = data.roomId+"";}
-		if(typeof(data.md5) == undefined){ io.to(socket.id).emit("login",{"success":false}); }else{ var md5 = data.md5+"";}
-		var controlMd5 = createMd5(id+facebookUId+uniqueName+uniqueName+name+kp+score+level+roomId);
-		io.to(socket.id).emit("login",{"success":(md5 == controlMd5)});
+		io.to(socket.id).emit("login",{"success":isSecure(data)});
+		if(isSecure(data)){
+		    data.ip = socket.handshake.address;
+		    data.socketId = socket.id;
+		    data.isai = false;
+			sm.users.insert(socket.id,data);
+		}
 	});
+	socket.on("playForQuick",function(data){
+	    if(isSecure(data)){
+
+        }
+    });
+	socket.on("getRooms",function (data) {
+        if(isSecure(data)){
+            io.to(socket.id).emit("getRooms",{"rooms":sm.rooms});
+        }
+    });
 });
 app.get("/",function(req,res){
 	res.sendFile(__dirname+"/pages/index.html");
@@ -88,6 +94,18 @@ app.get("/auth/facebook/callback",function(req,res){});
 app.get("/logout",function(req,res){});
 
 // functions
+function isSecure(data){
+	if(typeof(data.id) == undefined){ return false; }else{ var id = data.id+"";}
+	if(typeof(data.facebookUId) == undefined){var facebookUId = "";}else{ var facebookUId = data.facebookUId+"";}
+	if(typeof(data.uniqueName) == undefined){ return false; }else{ var uniqueName = data.uniqueName+"";}
+	if(typeof(data.name) == undefined){ var name = "";}else{ var name = data.name+"";}
+	if(typeof(data.kp) == undefined){ var kp = "";}else{ var kp = data.kp+"";}
+	if(typeof(data.score) == undefined){ var score = "";}else{ var score = data.score+"";}
+	if(typeof(data.roomId) == undefined){ var roomId = "";}else{ var roomId = data.roomId+"";}
+	if(typeof(data.md5) == undefined){ return false; }else{ var md5 = data.md5+"";}
+	var controlMd5 = createMd5(id+facebookUId+uniqueName+uniqueName+name+kp+score+roomId);
+	return (controlMd5 == md5);
+}
 function createMd5(string){
 	var firstMd5 = md5(string);
 	var newString = "";

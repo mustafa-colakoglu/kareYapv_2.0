@@ -1,16 +1,4 @@
-var Android = {
-	"id" : 1,
-	"facebookUId" : "123456789",
-	"uniqueName" : "ABC23",
-	"name" : "Mustafa Çolakoğlu",
-	"kp" : 100,
-	"score" : 500,
-	"level" : 1,
-	"roomId":1,
-	"profileImageUrl":"https://scontent-frt3-1.xx.fbcdn.net/v/t1.0-1/c53.0.160.160/p160x160/1012701_864726226871930_6102232789075953871_n.jpg?oh=f3eec577474b2ba20b8bf25650077e7a&oe=5A22D6F9",
-	"md5" : "339cefeb08b0bafa9bf80a40107c7ae2"
-}
-if(typeof(Android) == "undefined"){
+if(typeof(AndroidData) == "undefined"){
 	alert("Lütfen uygulamadan giriş yapın");
 	$(document).ready(function(){
 		$("html").html("");
@@ -21,7 +9,7 @@ else{
 	var windowHeight = $(window).height();
 	var socket = io.connect("http://localhost");
 	isLogined = false;
-	socket.emit("login",Android);
+	socket.emit("login",AndroidData);
 	step(0);
 	function step(stepId){
 		if(stepId == 0){
@@ -50,6 +38,9 @@ else{
 				alertMessage("Lütfen internet bağlantınızı kontrol edin.");
 			}
 		}
+		else if(stepId == 9){
+		    takeMenu(2,undefined,21);
+        }
 		else if(stepId == 12){
 			takeMenu(2,1);
 		}
@@ -74,6 +65,12 @@ else{
 		else if(stepId== 19){
 			bringMenu(2);
 		}
+		else if(stepId == 20){
+			takeMenu(0,1);
+		}
+		else if(stepId == 21){
+		    socket.emit("getRooms",AndroidData);
+        }
 	}
 	function openWaitingPage(){
 		if(isConnect()){
@@ -89,6 +86,7 @@ else{
 				}
 				else if(quickPlayFinded == false){
 					if(tryQuickPlayCount < 5){
+					    socket.emit("playForQuick",AndroidData);
 						tryQuickPlayCount++;
 					}
 					else{
@@ -156,7 +154,7 @@ else{
 				$(".game-page-page:eq(0)").show();
 			}
 			else{
-				Android.Toast("İnternet bağlantınızı kontrol edin");
+				//Android.Toast("İnternet bağlantınızı kontrol edin");
 			}
 		}
 		else if(pageId == 1){
@@ -171,7 +169,14 @@ else{
 	}
 	function firstOpenApp(){
 		$(document).ready(function(){
-			$(".menus ul").hide();
+			var hiding = [
+				".menus ul",
+				".profile",
+				".waiting-page"
+			];
+			for(var i=0; i<hiding.length;i++){
+				$(hiding[i]).hide();
+			}
 		});
 	}
 	function isConnect(){
@@ -287,15 +292,16 @@ else{
 		}
 	}
 	function bringProfile(){
-		if(typeof(Android.name) != "undefined"){
-			$(".profile .name").html(Android.name.substring(0,17));
+		$(".profile").show();
+		if(typeof(AndroidData.name) != "undefined"){
+			$(".profile .name").html(AndroidData.name.substring(0,17));
 		}
-		else if(typeof(Android.uniqueName) != "undefined"){
-			$(".profile .name").html(Android.uniqueName.substring(0,17));
+		else if(typeof(AndroidData.uniqueName) != "undefined"){
+			$(".profile .name").html(AndroidData.uniqueName.substring(0,17));
 		}
-		$(".profile .score").html(Android.score+" Puan");
-		$(".profile .kp").html(Android.kp+" Kp");
-		$(".profile .profile-image img").attr("src",Android.profileImageUrl);
+		$(".profile .score").html(AndroidData.score+" Puan");
+		$(".profile .kp").html(AndroidData.kp+" Kp");
+		$(".profile .profile-image img").attr("src",AndroidData.profileImageUrl);
 		$(".profile").animate({"left":0},250);
 	}
 	function bringGamePage(){
@@ -320,14 +326,24 @@ else{
 	}
 	socket.on("connect",function(){
 		colorize();
+		socket.emit("login",AndroidData);
 	});
 	socket.on("disconnect",function(){
 		colorize();
+		isLogined = false;
 	});
 	socket.on("login",function(data){
 		isLogined = data.success;
+		if ($(".menus ul:eq(0)").css("display") === "block") {
+			if(isLogin()){
+				step(2);
+			}
+		}
 	});
 	socket.on("startingGame",function(data){
 		quickPlayFinded = true;
 	});
+	socket.on("getRooms",function (data) {
+        console.log(data.rooms);
+    });
 }
