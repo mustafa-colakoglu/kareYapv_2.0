@@ -65,10 +65,10 @@ var server = app.listen(process.env.PORT || 80);
 var io = require("socket.io").listen(server);
 io.set("origins","*:*");
 io.sockets.on("connection",function(socket){
-	console.log("connected");
 	socket.on("login",function(data){
 		io.to(socket.id).emit("login",{"success":isSecure(data)});
 		if(isSecure(data)){
+            console.log("connected");
 		    data.ip = socket.handshake.address;
 		    data.socketId = socket.id;
 		    data.isai = false;

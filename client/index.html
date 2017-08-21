@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="css/style.css" />
 	<script type="text/javascript" src="js/socket.io.js"></script>
 	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/jquery.fblogin.js"></script>
 	<script type="text/javascript">
 		var AndroidData = {
 			"id" : 1,
@@ -44,6 +43,7 @@
 						<li onClick="step(5)">Enler</li>
 						<li onClick="step(6)">Nasıl Oynanır?</li>
 						<li onClick="step(7)">Ayarlar</li>
+                        <li onClick="step(99)">Kp Kazan</li>
 						<li onClick="logout()" class="turnBack">Çıkış</li>
 					</ul>
 					<ul class="game-menu">
@@ -61,6 +61,10 @@
 					<div class="kp"></div>
 					<div class="profile-image"><img src="" /></div>
 				</div>
+                <div class="game-rooms">
+                    <ul></ul>
+                    <div class="turn-back" onClick="step(23)">İptal Et</div>
+                </div>
 				<div class="game-page">
 					<div class="game-page-menu">
 						<div class="game-page-menu-item" onClick="step(14)">Online</div>

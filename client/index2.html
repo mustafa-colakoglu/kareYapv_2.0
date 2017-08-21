@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Squar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="css/reset.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="text/javascript" src="js/socket.io.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript">
+        var AndroidData = {
+            "id" : 2,
+            "facebookUId" : "123456799",
+            "uniqueName" : "ABC24",
+            "name" : "Mustafa Çolakoğl2",
+            "kp" : 100,
+            "score" : 500,
+            "roomId":1,
+            "profileImageUrl":"https://scontent-frt3-1.xx.fbcdn.net/v/t1.0-1/c53.0.160.160/p160x160/1012701_864726226871930_6102232789075953871_n.jpg?oh=f3eec577474b2ba20b8bf25650077e7a&oe=5A22D6F9",
+            "md5" : "a46d9e645b9849ce046c5b67dc685914"
+        }
+    </script>
+    <script type="text/javascript" src="js/use.js"></script>
+</head>
+<body>
+<div class="row">
+    <!-- Açılış Divi -->
+    <div class="any-menu">
+        <div class="open-game-top"></div>
+        <div class="open-game-bottom"></div>
+        <div class="back-animation"></div>
+        <div class="main-menu">
+            <div class="menus">
+                <ul class="first-menu">
+                    <li onClick="connectFacebook()">Facebook ile bağlan</li>
+                    <li>Misafirimiz olun</li>
+                </ul>
+                <ul class="game-main-menu">
+                    <li onClick="step(4)">Oyuna Giriş</li>
+                    <li onClick="step(5)">Enler</li>
+                    <li onClick="step(6)">Nasıl Oynanır?</li>
+                    <li onClick="step(7)">Ayarlar</li>
+                    <li onClick="step(99)">Kp Kazan</li>
+                    <li onClick="logout()" class="turnBack">Çıkış</li>
+                </ul>
+                <ul class="game-menu">
+                    <li onClick="step(8)">Hızlı Oyna</li>
+                    <li onClick="step(9)">Salon Seçin</li>
+                    <li onClick="step(10)">Masa Aç</li>
+                    <li onClick="step(11)">Masa Seçin</li>
+                    <li onClick="step(12)" class="turnBack">Geri Dön</li>
+                </ul>
+            </div>
+            <div class="profile">
+                <div class="name"></div>
+                <div class="onoff-line"><div class="round"></div></div>
+                <div class="score"></div>
+                <div class="kp"></div>
+                <div class="profile-image"><img src="" /></div>
+            </div>
+            <div class="game-rooms">
+                <ul></ul>
+                <div class="turn-back" onClick="step(23)">İptal Et</div>
+            </div>
+            <div class="game-page">
+                <div class="game-page-menu">
+                    <div class="game-page-menu-item" onClick="step(14)">Online</div>
+                    <div class="game-page-menu-item" onClick="step(15)">Offline</div>
+                </div>
+                <div class="game-page-page">
+
+                </div>
+                <div class="game-page-page">
+
+                </div>
+                <div class="online-menu"></div>
+            </div>
+            <div class="waiting-page">
+                <div class="wait-message">Rakip aranıyor . . .</div>
+                <div class="wait-cancel" onClick="step(18)">İptal</div>
+            </div>
+            <div class="alert-message">
+                <div class="message"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

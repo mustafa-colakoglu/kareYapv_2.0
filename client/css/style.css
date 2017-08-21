@@ -222,6 +222,55 @@ a {
 	height:calc(100% - 80px);
 	display:none;
 }
+.game-rooms{
+    width:100%;
+    height:calc(100% - 40px);
+    top:40px;
+    position:absolute;
+    overflow:hidden;
+    display:none;
+}
+.game-rooms ul{
+    width:100%;
+    height:auto;
+    overflow:hidden;
+}
+.game-rooms ul li{
+    width:100%;
+    height:auto;
+    overflow:hidden;
+}
+.room-name{
+    width:calc(80% - 20px);
+    padding:10px;
+    text-align:left;
+    font-size:25px;
+}
+.login-room{
+    width:20%;
+    height:auto;
+}
+.login-room-button{
+    width:calc(100% - 16px);
+    padding:8px;
+    margin-top:1px;
+    background:#f00202;
+    color:#fff;
+    text-align:center;
+    cursor:pointer;
+}
+.turn-back{
+    width:calc(60% - 20px);
+    height:auto;
+    padding:10px;
+    background:red;
+    border-radius:5px;
+    text-align:center;
+    color:#fff;
+    margin-left:20%;
+    top:5%;
+    cursor:pointer;
+}
 .alert-message{
 	width:calc(60% - 20px);
 	height:auto;

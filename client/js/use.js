@@ -71,10 +71,20 @@ else{
 		else if(stepId == 21){
 		    socket.emit("getRooms",AndroidData);
         }
+        else if(stepId == 22){
+		    bringRooms();
+        }
+        else if(stepId == 23){
+            takeRooms(19);
+        }
 	}
 	function openWaitingPage(){
 		if(isConnect()){
-			$(".waiting-page").show();
+			$(".waiting-page").css({
+			    "display":"block",
+                "left":"100%"
+            });
+			$(".waiting-page").animate({"left":0},150);
 			tryQuickPlayCount = 0;
 			quickPlayFinded = false;
 			cancelledQuickPlay = false;
@@ -108,8 +118,14 @@ else{
 		}
 	}
 	function closeWaitingPage(){
-		$(".waiting-page").hide();
-		cancelledQuickPlay = true;
+        cancelledQuickPlay = true;
+		$(".waiting-page").animate({
+		    "left":"-100%"
+        },150,"linear",function(){
+		    $(this).after(function(){
+		        $(".waiting-page").hide();
+            });
+        });
 	}
 	function alertMessage(message){
 		$(".alert-message .message").html(message);
@@ -304,10 +320,47 @@ else{
 		$(".profile .profile-image img").attr("src",AndroidData.profileImageUrl);
 		$(".profile").animate({"left":0},250);
 	}
+	function bringRooms(){
+	    $(".game-rooms").css({
+	        "display":"block",
+            "left":"100%"
+        });
+        $(".game-rooms").animate({
+            "left":"0px"
+        },150);
+    }
+    function takeRooms(nextStepId = undefined){
+            $(".game-rooms").animate({
+                "left":"-100%"
+            },150,"linear",function(){
+                $(this).after(function(){
+                    if(nextStepId != undefined) {
+                        step(nextStepId);
+                    }
+                });
+            });
+    }
 	function bringGamePage(){
 		$(".game-page").css({"left":"100%","display":"block"});
 		$(".game-page").animate({"left":0},150);
 	}
+	function placeRooms(room){
+	    if(room.left != null){
+	        placeRooms(room.left);
+        }
+        var addRoom = "";
+	    addRoom = addRoom + '<li>';
+	    addRoom = addRoom + '<div class="room-name">'+room.value.roomName+'</div>';
+        addRoom = addRoom + '<div class="login-room"><div class="login-room-button" onClick="selectRoom('+room.value.roomId+')">Seç</div></div>';
+	    $(".game-rooms ul").append(addRoom);
+	    if(room.right != null){
+	        placeRooms(room.right);
+        }
+        step(22);
+    }
+    function selectRoom(roomId){
+
+    }
 	function colorize(){
 		if(isConnect()){
 			$(".profile").css("color","#ffffff");
@@ -326,7 +379,7 @@ else{
 	}
 	socket.on("connect",function(){
 		colorize();
-		socket.emit("login",AndroidData);
+		//socket.emit("login",AndroidData);
 	});
 	socket.on("disconnect",function(){
 		colorize();
@@ -344,6 +397,7 @@ else{
 		quickPlayFinded = true;
 	});
 	socket.on("getRooms",function (data) {
-        console.log(data.rooms);
+	    $(".game-rooms ul").html("");
+        placeRooms(data.rooms._root);
     });
 }
