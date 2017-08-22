@@ -67,22 +67,90 @@ io.set("origins","*:*");
 io.sockets.on("connection",function(socket){
 	socket.on("login",function(data){
 		io.to(socket.id).emit("login",{"success":isSecure(data)});
+		//console.log(doSecureData(data))
 		if(isSecure(data)){
-            console.log("connected");
+            var date = new Date();
+            console.log("connected -- time : "+date.getTime());
 		    data.ip = socket.handshake.address;
 		    data.socketId = socket.id;
 		    data.isai = false;
-			sm.users.insert(socket.id,data);
+		    data.loginTime = date.getTime();
+			sm.usersWithSocketId.insert(socket.id,data);
+			sm.usersWithId.insert(data.id,data);
 		}
 	});
 	socket.on("playForQuick",function(data){
-	    if(isSecure(data)){
+	    if(isSecureAndIsLogin(data,socket.id)){
+	        var user = sm.usersWithSocketId.get(socket.id);
+	        var getNonFullTable = sm.rooms.get(user.roomId).getNonFull(undefined,user.kp);
+	        if(getNonFullTable != undefined){
+	            getNonFullTable.isFull = true;
+	            if(getNonFullTable.usersmd5[0] == ""){
+	                getNonFullTable.usersmd5[0] = user.md5;
+                }
+                else{
+                    getNonFullTable.usersmd5[1] = user.md5;
+                }
+                if(!getNonFullTable.started){
+	                getNonFullTable.poolKp += getNonFullTable.kp;
+	                console.log(getNonFullTable.poolKp)
+	                user.kp -= getNonFullTable.kp;
+	                user.changedData = 2;
+	                user.started = true;
+	                io.to(socket.id).emit("updateData",doSecureData(user));
+	                io.to(socket.id).emit("startingGame",{"table":getNonFullTable});
+                }
+                else{
 
+                }
+            }
         }
     });
 	socket.on("getRooms",function (data) {
-        if(isSecure(data)){
+        if(isSecureAndIsLogin(data,socket.id)){
             io.to(socket.id).emit("getRooms",{"rooms":sm.rooms});
+        }
+    });
+	socket.on("changeRoom",function (data) {
+        if(isSecureAndIsLogin(data,socket.id)){
+            var currentKp = data.kp;
+            if(typeof(data.newRoomId) != "undefined"){
+                if(sm.rooms.contains(data.newRoomId)){
+                    var newRoom = sm.rooms.get(data.newRoomId);
+                    if(newRoom.maxKp != 0){
+                        if(data.kp >= newRoom.minKp & data.kp <= newRoom.maxKp){
+                            data.roomId = data.newRoomId;
+                            data = doSecureData(data);
+                            data.error = 0;
+                            data.changedData = "1"; // roomId
+                        }
+                        else{
+                            data.error = 1;
+                            data.changedData = "1"; // roomId
+                        }
+                    }
+                    else{
+                        if(data.kp >= newRoom.minKp){
+                            data.roomId = data.newRoomId;
+                            data = doSecureData(data);
+                            data.error = 0;
+                            data.changedData = "1"; // roomId
+                        }
+                        else{
+                            data.error = 1;
+                            data.changedData = "1"; // roomId
+                        }
+                    }
+                    socket.emit("updateData",data);
+                }
+            }
+        }
+    });
+	socket.on("disconnect",function () {
+        if(sm.usersWithSocketId.contains(socket.id)){
+            var userData = sm.usersWithSocketId.get(socket.id);
+            sm.usersWithSocketId.delete(userData.socketId);
+            sm.usersWithId.delete(userData.id);
         }
     });
 });
@@ -105,6 +173,20 @@ function isSecure(data){
 	if(typeof(data.md5) == undefined){ return false; }else{ var md5 = data.md5+"";}
 	var controlMd5 = createMd5(id+facebookUId+uniqueName+uniqueName+name+kp+score+roomId);
 	return (controlMd5 == md5);
+}
+function doSecureData(data){
+    if(typeof(data.id) == undefined){ return false; }else{ var id = data.id+"";}
+    if(typeof(data.facebookUId) == undefined){var facebookUId = "";}else{ var facebookUId = data.facebookUId+"";}
+    if(typeof(data.uniqueName) == undefined){ return false; }else{ var uniqueName = data.uniqueName+"";}
+    if(typeof(data.name) == undefined){ var name = "";}else{ var name = data.name+"";}
+    if(typeof(data.kp) == undefined){ var kp = "";}else{ var kp = data.kp+"";}
+    if(typeof(data.score) == undefined){ var score = "";}else{ var score = data.score+"";}
+    if(typeof(data.roomId) == undefined){ var roomId = "";}else{ var roomId = data.roomId+"";}
+    data.md5 = createMd5(id+facebookUId+uniqueName+uniqueName+name+kp+score+roomId);
+    return data;
+}
+function isSecureAndIsLogin(data,socketId) {
+    return (isSecure(data) & sm.usersWithSocketId.contains(socketId) & sm.usersWithId.contains(data.id));
 }
 function createMd5(string){
 	var firstMd5 = md5(string);
